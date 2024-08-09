@@ -17,8 +17,9 @@ const ImageClassifier = () => {
   // Predict image
   const classifyImage = async () => {
     if (model && imageRef.current) {
-      const predictions = await model.classify(imageRef.current);
-      setPrediction(predictions[0].className);
+      const img = imageRef.current;
+      const predictions = await model.classify(img);
+      setPrediction(predictions[0].className + ' (' + (predictions[0].probability * 100).toFixed(2) + '%)');
     }
   };
 
@@ -28,7 +29,8 @@ const ImageClassifier = () => {
     const reader = new FileReader();
     reader.onload = () => {
       setImageSrc(reader.result);
-      classifyImage();
+      // Trigger a new image classification after image is loaded
+      setTimeout(classifyImage, 100); // Delay to ensure image is rendered
     };
     reader.readAsDataURL(file);
   };
@@ -56,3 +58,4 @@ const ImageClassifier = () => {
 };
 
 export default ImageClassifier;
+
